@@ -1,0 +1,164 @@
+#refresh for urdf - robot.urdf file
+colcon build
+source install/setup.bash
+ros2 run robot_state_publisher robot_state_publisher src/Agro_ros/urdf/robot.urdf
+
+
+
+#joint_state_publisher_gui
+sudo apt update
+sudo apt install ros-humble-joint-state-publisher-gui
+source /opt/ros/humble/setup.bash
+ros2 pkg list | grep joint_state
+ros2 run joint_state_publisher_gui joint_state_publisher_gui
+
+
+#command to see join connection
+ros2 run tf2_tools view_frames
+
+
+
+# make the lidar map
+
+
+FIST THIS INDIVISUAL COMMAND TO CHECK THE CONNECTCTION WITH THE LIDAR 
+
+rls -l /dev/ttyUSB* /dev/ttyACM* 2>/dev/null
+
+dmesg | tail -30
+
+
+
+terminal 1 
+
+source /opt/ros/humble/setup.bash
+source ~/ros/Agro_ros/install/setup.bash
+ros2 run rplidar_ros rplidar_composition --ros-args \
+  -p serial_port:=/dev/ttyUSB0 \
+  -p serial_baudrate:=115200 \
+  -p frame_id:=base_link \
+  -p angle_compensate:=true
+
+
+
+
+
+terminal 2
+
+source /opt/ros/humble/setup.bash
+source ~/ros/Agro_ros/install/setup.bash
+
+ros2 run robot_state_publisher robot_state_publisher \
+  --ros-args \
+  -p robot_description:="$(cat ~/ros/Agro_ros/src/Agro_ros/urdf/robot.urdf)"
+
+
+
+
+terminal 3
+
+
+source /opt/ros/humble/setup.bash
+source ~/ros/Agro_ros/install/setup.bash
+
+ros2 run rf2o_laser_odometry rf2o_laser_odometry_node \
+  --ros-args \
+  --params-file ~/ros/Agro_ros/rf2o_params.yaml
+
+
+
+terminal 4
+
+source /opt/ros/humble/setup.bash
+source ~/ros/Agro_ros/install/setup.bash
+
+ros2 launch slam_toolbox online_sync_launch.py \
+  slam_params_file:=/home/ubuntu/ros/Agro_ros/src/Agro_ros/slam_params.yaml \
+  use_sim_time:=false
+
+
+
+
+terminal 5
+
+source /opt/ros/humble/setup.bash
+source ~/ros/Agro_ros/install/setup.bash
+
+rviz2
+
+
+
+
+
+
+
+
+
+TERMINAL COMMAND WHEN YOU WANT TO RUN ON RASPI VIA joint_state_publisher_gui
+
+TERMINAL 1 -SSH 
+source /opt/ros/humble/setup.bash
+source ~/ros/install/setup.bash
+
+export ROS_DOMAIN_ID=0
+export ROS_LOCALHOST_ONLY=0
+unset FASTRTPS_DEFAULT_PROFILES_FILE
+
+ros2 run rplidar_ros rplidar_composition --ros-args \
+  -p serial_port:=/dev/ttyUSB0 \
+  -p serial_baudrate:=115200 \
+  -p frame_id:=base_link \
+  -p angle_compensate:=true
+
+
+
+TERMINAL 2 - SSH 
+source /opt/ros/humble/setup.bash
+source ~/ros/install/setup.bash
+
+export ROS_DOMAIN_ID=0
+export ROS_LOCALHOST_ONLY=0
+unset FASTRTPS_DEFAULT_PROFILES_FILE
+
+ros2 run robot_state_publisher robot_state_publisher \
+  --ros-args \
+  -p robot_description:="$(cat ~/ros/Agro_ros/src/Agro_ros/urdf/robot.urdf)"
+
+
+
+TERMINAL 3 - SSH 
+source /opt/ros/humble/setup.bash
+source ~/ros/install/setup.bash
+
+export ROS_DOMAIN_ID=0
+export ROS_LOCALHOST_ONLY=0
+unset FASTRTPS_DEFAULT_PROFILES_FILE
+
+ros2 run rf2o_laser_odometry rf2o_laser_odometry_node \
+  --ros-args \
+  --params-file ~/ros/Agro_ros/rf2o_params.yaml
+
+
+
+TERMINAL 4 - SSH 
+source /opt/ros/humble/setup.bash
+source ~/ros/install/setup.bash
+
+export ROS_DOMAIN_ID=0
+export ROS_LOCALHOST_ONLY=0
+unset FASTRTPS_DEFAULT_PROFILES_FILE
+
+ros2 launch slam_toolbox online_sync_launch.py \
+  slam_params_file:=/home/hrishikesh/ros/Agro_ros/src/Agro_ros/slam_params.yaml \
+  use_sim_time:=false 
+
+
+TERMINAL 5 - LAPTOP
+source /opt/ros/humble/setup.bash
+source ~/ros/install/setup.bash
+
+export ROS_DOMAIN_ID=0
+export ROS_LOCALHOST_ONLY=0
+unset FASTRTPS_DEFAULT_PROFILES_FILE
+
+rviz2

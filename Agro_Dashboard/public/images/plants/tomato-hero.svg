@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ECFDF5" />
+      <stop offset="50%" stop-color="#D1FAE5" />
+      <stop offset="100%" stop-color="#A7F3D0" />
+    </linearGradient>
+    <linearGradient id="stemGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#15803D" />
+      <stop offset="100%" stop-color="#166534" />
+    </linearGradient>
+    <linearGradient id="leafGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ADE80" />
+      <stop offset="100%" stop-color="#15803D" />
+    </linearGradient>
+    <linearGradient id="leafGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22C55E" />
+      <stop offset="100%" stop-color="#14532D" />
+    </linearGradient>
+    <radialGradient id="tomatoRed" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#F87171" />
+      <stop offset="40%" stop-color="#EF4444" />
+      <stop offset="100%" stop-color="#991B1B" />
+    </radialGradient>
+    <radialGradient id="tomatoGreen" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#86EFAC" />
+      <stop offset="50%" stop-color="#22C55E" />
+      <stop offset="100%" stop-color="#15803D" />
+    </radialGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="130%" height="130%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#064E3B" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Background Environment -->
+  <rect width="800" height="600" rx="24" fill="url(#bgGrad)" />
+  <circle cx="400" cy="300" r="280" fill="#FFFFFF" opacity="0.35" />
+
+  <!-- Soil Mound Base -->
+  <ellipse cx="400" cy="530" rx="260" ry="40" fill="#78350F" opacity="0.15" />
+  <ellipse cx="400" cy="520" rx="220" ry="32" fill="#92400E" opacity="0.25" />
+  <ellipse cx="400" cy="515" rx="180" ry="24" fill="#B45309" opacity="0.2" />
+
+  <!-- Root Collar & Main Stems -->
+  <g filter="url(#softShadow)">
+    <path d="M 400 515 Q 395 380 405 240 Q 410 160 395 90" fill="none" stroke="url(#stemGrad)" stroke-width="14" stroke-linecap="round" />
+    <!-- Secondary lateral branches -->
+    <path d="M 402 430 Q 340 390 280 410" fill="none" stroke="url(#stemGrad)" stroke-width="9" stroke-linecap="round" />
+    <path d="M 403 360 Q 470 330 540 350" fill="none" stroke="url(#stemGrad)" stroke-width="9" stroke-linecap="round" />
+    <path d="M 404 290 Q 330 240 260 250" fill="none" stroke="url(#stemGrad)" stroke-width="8" stroke-linecap="round" />
+    <path d="M 405 220 Q 480 180 530 190" fill="none" stroke="url(#stemGrad)" stroke-width="7" stroke-linecap="round" />
+    <path d="M 402 160 Q 340 120 290 125" fill="none" stroke="url(#stemGrad)" stroke-width="6" stroke-linecap="round" />
+  </g>
+
+  <!-- Compound Leaves Left Lower -->
+  <g filter="url(#softShadow)">
+    <path d="M 280 410 C 240 430 190 410 170 380 C 190 350 250 360 280 410 Z" fill="url(#leafGrad1)" />
+    <path d="M 250 385 C 220 370 190 340 195 320 C 220 325 245 355 250 385 Z" fill="url(#leafGrad2)" />
+    <path d="M 270 420 C 250 450 220 470 200 460 C 205 435 240 425 270 420 Z" fill="url(#leafGrad2)" />
+  </g>
+
+  <!-- Compound Leaves Right Lower -->
+  <g filter="url(#softShadow)">
+    <path d="M 540 350 C 590 370 640 350 660 320 C 640 290 580 300 540 350 Z" fill="url(#leafGrad1)" />
+    <path d="M 510 330 C 540 300 570 270 590 280 C 585 305 550 325 510 330 Z" fill="url(#leafGrad2)" />
+    <path d="M 530 365 C 560 395 590 410 610 400 C 600 375 570 365 530 365 Z" fill="url(#leafGrad2)" />
+  </g>
+
+  <!-- Compound Leaves Left Mid -->
+  <g filter="url(#softShadow)">
+    <path d="M 260 250 C 210 260 160 230 140 200 C 170 180 230 200 260 250 Z" fill="url(#leafGrad1)" />
+    <path d="M 230 230 C 200 200 170 170 180 150 C 205 160 225 195 230 230 Z" fill="url(#leafGrad2)" />
+    <path d="M 240 265 C 210 290 170 300 160 285 C 175 265 215 260 240 265 Z" fill="url(#leafGrad2)" />
+  </g>
+
+  <!-- Compound Leaves Right Mid -->
+  <g filter="url(#softShadow)">
+    <path d="M 530 190 C 580 195 625 170 640 140 C 615 120 560 140 530 190 Z" fill="url(#leafGrad1)" />
+    <path d="M 495 180 C 525 150 550 120 570 125 C 565 150 535 170 495 180 Z" fill="url(#leafGrad2)" />
+  </g>
+
+  <!-- Top Leaves & Apex -->
+  <g filter="url(#softShadow)">
+    <path d="M 395 90 C 370 50 340 30 310 40 C 320 70 360 85 395 90 Z" fill="url(#leafGrad1)" />
+    <path d="M 395 90 C 420 50 450 30 480 40 C 470 70 430 85 395 90 Z" fill="url(#leafGrad1)" />
+    <path d="M 395 80 C 395 40 400 10 395 0 C 390 10 390 40 395 80 Z" fill="url(#leafGrad2)" />
+  </g>
+
+  <!-- Yellow Tomato Blossom Flowers (Flowering stage) -->
+  <g transform="translate(365, 140) scale(0.9)">
+    <polygon points="30,0 36,20 58,15 42,32 55,50 34,44 20,62 16,40 -4,44 10,28 -2,12 18,18" fill="#FACC15" />
+    <circle cx="28" cy="30" r="7" fill="#EAB308" />
+  </g>
+  <g transform="translate(435, 175) scale(0.75)">
+    <polygon points="30,0 36,20 58,15 42,32 55,50 34,44 20,62 16,40 -4,44 10,28 -2,12 18,18" fill="#FDE047" />
+    <circle cx="28" cy="30" r="6" fill="#EAB308" />
+  </g>
+
+  <!-- Ripening Tomatoes (Cluster) -->
+  <!-- Big Ripe Tomato -->
+  <g filter="url(#softShadow)" transform="translate(320, 290)">
+    <!-- Sepals / Calyx -->
+    <path d="M 70 20 Q 50 -10 35 5 Q 55 18 70 20 Z" fill="#15803D" />
+    <path d="M 70 20 Q 90 -10 105 5 Q 85 18 70 20 Z" fill="#15803D" />
+    <path d="M 70 20 Q 70 -15 70 -5 Q 70 15 70 20 Z" fill="#166534" />
+    <path d="M 70 20 Q 40 25 30 35 Q 50 30 70 20 Z" fill="#15803D" />
+    <path d="M 70 20 Q 100 25 110 35 Q 90 30 70 20 Z" fill="#15803D" />
+    <!-- Fruit -->
+    <circle cx="70" cy="80" r="58" fill="url(#tomatoRed)" />
+    <!-- Fruit Highlight -->
+    <ellipse cx="50" cy="55" rx="16" ry="9" fill="#FFFFFF" opacity="0.45" transform="rotate(-25 50 55)" />
+  </g>
+
+  <!-- Secondary Medium Tomato -->
+  <g filter="url(#softShadow)" transform="translate(425, 270)">
+    <circle cx="50" cy="60" r="44" fill="url(#tomatoRed)" />
+    <!-- Calyx -->
+    <polygon points="50,15 40,5 45,18 30,15 45,22 45,30 50,22 55,30 55,22 70,15 55,18 60,5" fill="#15803D" />
+    <ellipse cx="36" cy="45" rx="12" ry="7" fill="#FFFFFF" opacity="0.4" transform="rotate(-20 36 45)" />
+  </g>
+
+  <!-- Small Green Immature Tomato -->
+  <g filter="url(#softShadow)" transform="translate(460, 225)">
+    <circle cx="30" cy="35" r="26" fill="url(#tomatoGreen)" />
+    <polygon points="30,10 24,2 27,12 16,10 27,15 27,20 30,15 33,20 33,15 44,10 33,12 36,2" fill="#166534" />
+    <ellipse cx="22" cy="26" rx="7" ry="4" fill="#FFFFFF" opacity="0.35" transform="rotate(-15 22 26)" />
+  </g>
+
+  <!-- Agronomic Digital Twin HUD Overlay Indicators -->
+  <g transform="translate(40, 40)">
+    <rect width="180" height="42" rx="12" fill="#FFFFFF" fill-opacity="0.9" stroke="#DCFCE7" stroke-width="1.5" />
+    <circle cx="24" cy="21" r="5" fill="#16A34A" />
+    <text x="38" y="18" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700" fill="#166534" letter-spacing="0.5">HEALTH INDEX</text>
+    <text x="38" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="800" fill="#111827">86% Optimal</text>
+  </g>
+
+  <g transform="translate(580, 40)">
+    <rect width="180" height="42" rx="12" fill="#FFFFFF" fill-opacity="0.9" stroke="#DCFCE7" stroke-width="1.5" />
+    <circle cx="24" cy="21" r="5" fill="#3B82F6" />
+    <text x="38" y="18" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="700" fill="#1D4ED8" letter-spacing="0.5">PHENOLOGY STAGE</text>
+    <text x="38" y="32" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="800" fill="#111827">Flowering / Fruit</text>
+  </g>
+</svg>

@@ -1,0 +1,52 @@
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Python bytecode and caches
+__pycache__/
+**/__pycache__/
+*.py[cod]
+*.pyd
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.tox/
+.nox/
+.coverage
+coverage.xml
+htmlcov/
+.ipynb_checkpoints/
+
+# Build and packaging artifacts
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Generated ML artifacts and outputs
+results_*/
+model_created/
+app/model.pth
+app/models/*.pkl
+app/models/*.joblib
+app/models/*.pt
+app/models/*.pth
+*.pkl
+*.joblib
+*.pt
+*.pth
+
+# Derived dataset splits and archives
+Dataset/archive/
+Dataset/train/
+Dataset/val/

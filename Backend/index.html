@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FarmerOS - AgriRobot Controller</title>
+    <style>
+        /* ===================== RESET & BASE ===================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0e17;
+            color: #e0e6ed;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: linear-gradient(145deg, #141b2b, #1a2335);
+            border-radius: 24px;
+            padding: 30px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* ===================== HEADER ===================== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: #0a0e17;
+        }
+
+        .logo-text {
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+
+        .logo-text span {
+            color: #00cec9;
+        }
+
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            padding: 6px 14px;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .status-dot.online {
+            background: #00b894;
+            box-shadow: 0 0 12px rgba(0, 184, 148, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.offline {
+            background: #ff6b6b;
+            box-shadow: 0 0 12px rgba(255, 107, 107, 0.3);
+        }
+
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* ===================== STATUS BAR ===================== */
+        .status-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .status-item {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            padding: 10px 12px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .status-item .label {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #8892a8;
+            margin-bottom: 2px;
+        }
+
+        .status-item .value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e0e6ed;
+        }
+
+        .status-item .value.online {
+            color: #00b894;
+        }
+        .status-item .value.offline {
+            color: #ff6b6b;
+        }
+
+        /* ===================== SPEED CONTROL ===================== */
+        .speed-section {
+            margin-bottom: 20px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+        }
+
+        .speed-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #8892a8;
+            margin-bottom: 6px;
+        }
+
+        .speed-value {
+            color: #00cec9;
+            font-weight: 600;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 2px;
+            background: linear-gradient(to right, #1a2335, #00cec9);
+            outline: none;
+            transition: background 0.2s;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00cec9;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(0, 206, 201, 0.3);
+            border: 2px solid #0a0e17;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #00cec9;
+            cursor: pointer;
+            border: 2px solid #0a0e17;
+        }
+
+        .speed-presets {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .preset-btn {
+            padding: 4px 14px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.04);
+            color: #8892a8;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preset-btn:hover {
+            background: rgba(0, 206, 201, 0.15);
+            border-color: #00cec9;
+            color: #e0e6ed;
+        }
+
+        .preset-btn.active {
+            background: rgba(0, 206, 201, 0.2);
+            border-color: #00cec9;
+            color: #00cec9;
+        }
+
+        /* ===================== D-PAD CONTROLS ===================== */
+        .dpad {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            max-width: 300px;
+            margin: 0 auto 20px;
+        }
+
+        .dpad-btn {
+            padding: 18px 0;
+            border-radius: 16px;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            transition: all 0.15s;
+            background: rgba(255, 255, 255, 0.04);
+            color: #8892a8;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .dpad-btn:active {
+            transform: scale(0.92);
+        }
+
+        .dpad-btn:hover {
+            background: rgba(255, 255, 255, 0.07);
+            color: #e0e6ed;
+        }
+
+        .dpad-btn.active {
+            background: rgba(0, 206, 201, 0.2);
+            border-color: #00cec9;
+            color: #00cec9;
+            box-shadow: 0 0 30px rgba(0, 206, 201, 0.1);
+        }
+
+        .dpad-btn.up {
+            grid-column: 2;
+            border-radius: 16px 16px 4px 4px;
+        }
+        .dpad-btn.down {
+            grid-column: 2;
+            border-radius: 4px 4px 16px 16px;
+        }
+        .dpad-btn.left {
+            grid-column: 1;
+            grid-row: 2;
+            border-radius: 16px 4px 4px 16px;
+        }
+        .dpad-btn.right {
+            grid-column: 3;
+            grid-row: 2;
+            border-radius: 4px 16px 16px 4px;
+        }
+        .dpad-btn.stop {
+            grid-column: 2;
+            grid-row: 2;
+            background: rgba(255, 107, 107, 0.1);
+            border-color: rgba(255, 107, 107, 0.2);
+            color: #ff6b6b;
+            font-size: 14px;
+            font-weight: 700;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            padding: 0;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .dpad-btn.stop:hover {
+            background: rgba(255, 107, 107, 0.2);
+            border-color: #ff6b6b;
+        }
+
+        .dpad-btn.stop:active {
+            background: rgba(255, 107, 107, 0.35);
+        }
+
+        /* ===================== ACTION BUTTONS ===================== */
+        .actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .action-btn {
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 0.03);
+            color: #8892a8;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.06);
+            color: #e0e6ed;
+        }
+
+        .action-btn.danger:hover {
+            background: rgba(255, 107, 107, 0.15);
+            border-color: #ff6b6b;
+            color: #ff6b6b;
+        }
+
+        .action-btn.primary:hover {
+            background: rgba(0, 206, 201, 0.15);
+            border-color: #00cec9;
+            color: #00cec9;
+        }
+
+        /* ===================== TELEMETRY ===================== */
+        .telemetry {
+            margin-top: 20px;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            color: #5a6a7a;
+            max-height: 100px;
+            overflow-y: auto;
+            line-height: 1.6;
+        }
+
+        .telemetry .highlight {
+            color: #00cec9;
+        }
+
+        .telemetry .error {
+            color: #ff6b6b;
+        }
+
+        /* ===================== KEYBOARD HINT ===================== */
+        .keyboard-hint {
+            text-align: center;
+            font-size: 11px;
+            color: #3a4a5a;
+            margin-top: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .keyboard-hint kbd {
+            display: inline-block;
+            padding: 2px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            font-family: inherit;
+            font-size: 11px;
+            color: #5a6a7a;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        /* ===================== SCROLLBAR ===================== */
+        .telemetry::-webkit-scrollbar {
+            width: 4px;
+        }
+        .telemetry::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .telemetry::-webkit-scrollbar-thumb {
+            background: #2a3a4a;
+            border-radius: 2px;
+        }
+
+        /* ===================== RESPONSIVE ===================== */
+        @media (max-width: 480px) {
+            .container {
+                padding: 16px;
+            }
+            .dpad-btn {
+                padding: 14px 0;
+                font-size: 22px;
+            }
+            .dpad-btn.stop {
+                width: 54px;
+                height: 54px;
+                font-size: 12px;
+            }
+            .status-bar {
+                grid-template-columns: 1fr 1fr;
+            }
+            .logo-text {
+                font-size: 16px;
+            }
+            .header {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+            .connection-status {
+                font-size: 10px;
+                padding: 4px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="logo">
+                <div class="logo-icon">F</div>
+                <div class="logo-text">Agri<span>Robot</span></div>
+            </div>
+            <div class="connection-status">
+                <span class="status-dot offline" id="mqttStatusDot"></span>
+                <span id="mqttStatusText">Disconnected</span>
+            </div>
+        </div>
+
+        <!-- STATUS BAR -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="label">Movement</div>
+                <div class="value" id="movementStatus">⏹ Stop</div>
+            </div>
+            <div class="status-item">
+                <div class="label">Speed</div>
+                <div class="value" id="speedStatus">0%</div>
+            </div>
+            <div class="status-item">
+                <div class="label">RSSI</div>
+                <div class="value" id="rssiStatus">-- dBm</div>
+            </div>
+        </div>
+
+        <!-- SPEED CONTROL -->
+        <div class="speed-section">
+            <div class="speed-label">
+                <span>Speed</span>
+                <span class="speed-value" id="speedDisplay">200</span>
+            </div>
+            <input type="range" id="speedSlider" min="50" max="255" value="200" step="5" />
+            <div class="speed-presets">
+                <button class="preset-btn" data-speed="80">Slow</button>
+                <button class="preset-btn active" data-speed="200">Medium</button>
+                <button class="preset-btn" data-speed="255">Fast</button>
+            </div>
+        </div>
+
+        <!-- D-PAD CONTROLS -->
+        <div class="dpad">
+            <button class="dpad-btn up" data-dir="forward" title="Forward (W)">▲</button>
+            <button class="dpad-btn left" data-dir="left" title="Left (A)">◀</button>
+            <button class="dpad-btn stop" data-dir="stop" title="Stop (Space)">⏹</button>
+            <button class="dpad-btn right" data-dir="right" title="Right (D)">▶</button>
+            <button class="dpad-btn down" data-dir="backward" title="Backward (S)">▼</button>
+        </div>
+
+        <!-- ACTION BUTTONS -->
+        <div class="actions">
+            <button class="action-btn primary" id="sendStatusBtn">📡 Request Status</button>
+            <button class="action-btn danger" id="emergencyStopBtn">🛑 Emergency Stop</button>
+        </div>
+
+        <!-- TELEMETRY LOG -->
+        <div class="telemetry" id="telemetryLog">
+            <div>⏳ Waiting for connection...</div>
+        </div>
+
+        <div class="keyboard-hint">
+            <kbd>W</kbd> Forward &nbsp;·&nbsp; <kbd>S</kbd> Backward &nbsp;·&nbsp;
+            <kbd>A</kbd> Left &nbsp;·&nbsp; <kbd>D</kbd> Right &nbsp;·&nbsp;
+            <kbd>Space</kbd> Stop
+        </div>
+    </div>
+
+    <!-- ===================== MQTT OVER WEBSOCKET ===================== -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js">
+    </script>
+
+    <script>
+        // ===================== CONFIGURATION =====================
+        const CONFIG = {
+            broker: 'de740a3cc40d4fa89e921c2d6b25ce62.s1.eu.hivemq.cloud',
+            port: 8884, // WebSocket port for HiveMQ Cloud
+            username: 'Aakash_Kavediya',
+            password: 'Aakash@2006',
+            clientId: 'AgRobot_Web_' + Math.random().toString(16).substr(2, 8),
+            topicMove: 'farmeros/robot/move',
+            topicStatus: 'farmeros/robot/status',
+            useSSL: true,
+        };
+
+        // ===================== DOM REFS =====================
+        const elements = {
+            mqttStatusDot: document.getElementById('mqttStatusDot'),
+            mqttStatusText: document.getElementById('mqttStatusText'),
+            movementStatus: document.getElementById('movementStatus'),
+            speedStatus: document.getElementById('speedStatus'),
+            rssiStatus: document.getElementById('rssiStatus'),
+            speedDisplay: document.getElementById('speedDisplay'),
+            speedSlider: document.getElementById('speedSlider'),
+            telemetryLog: document.getElementById('telemetryLog'),
+            presetBtns: document.querySelectorAll('.preset-btn'),
+            dpadBtns: document.querySelectorAll('.dpad-btn'),
+            sendStatusBtn: document.getElementById('sendStatusBtn'),
+            emergencyStopBtn: document.getElementById('emergencyStopBtn'),
+        };
+
+        // ===================== STATE =====================
+        let currentSpeed = 200;
+        let currentDirection = 'stop';
+        let isMqttConnected = false;
+        let lastCommandTime = 0;
+
+        // ===================== MQTT CLIENT =====================
+        let client = null;
+
+        // ===================== TELEMETRY LOG =====================
+        function addLog(message, type = 'info') {
+            const log = elements.telemetryLog;
+            const entry = document.createElement('div');
+            const timestamp = new Date().toLocaleTimeString();
+
+            let color = '';
+            if (type === 'info') color = '#5a6a7a';
+            else if (type === 'highlight') color = '#00cec9';
+            else if (type === 'error') color = '#ff6b6b';
+            else if (type === 'success') color = '#00b894';
+
+            entry.style.color = color;
+            entry.textContent = `[${timestamp}] ${message}`;
+            log.appendChild(entry);
+            log.scrollTop = log.scrollHeight;
+
+            // Keep last 50 entries
+            while (log.children.length > 50) {
+                log.removeChild(log.firstChild);
+            }
+        }
+
+        // ===================== MQTT CONNECTION =====================
+        function connectMQTT() {
+            addLog('Connecting to MQTT broker...', 'info');
+
+            const protocol = CONFIG.useSSL ? 'wss://' : 'ws://';
+            const url = `${protocol}${CONFIG.broker}:${CONFIG.port}/mqtt`;
+
+            client = new Paho.MQTT.Client(url, CONFIG.clientId);
+
+            client.onConnectionLost = onConnectionLost;
+            client.onMessageArrived = onMessageArrived;
+
+            const options = {
+                userName: CONFIG.username,
+                password: CONFIG.password,
+                useSSL: CONFIG.useSSL,
+                keepAliveInterval: 60,
+                onSuccess: onConnectSuccess,
+                onFailure: onConnectFailure,
+                timeout: 10,
+            };
+
+            client.connect(options);
+        }
+
+        function onConnectSuccess() {
+            isMqttConnected = true;
+            elements.mqttStatusDot.className = 'status-dot online';
+            elements.mqttStatusText.textContent = 'Connected';
+            addLog('✅ Connected to HiveMQ Cloud!', 'success');
+
+            // Subscribe to status topic
+            client.subscribe(CONFIG.topicStatus, { qos: 1 });
+            addLog(`📡 Subscribed to ${CONFIG.topicStatus}`, 'highlight');
+
+            // Request initial status
+            setTimeout(() => {
+                sendCommand('stop', 0);
+                addLog('📡 Requesting initial status...', 'info');
+            }, 500);
+        }
+
+        function onConnectFailure(error) {
+            isMqttConnected = false;
+            elements.mqttStatusDot.className = 'status-dot offline';
+            elements.mqttStatusText.textContent = 'Disconnected';
+            addLog(`❌ Connection failed: ${error.errorMessage}`, 'error');
+
+            // Retry after 5 seconds
+            setTimeout(connectMQTT, 5000);
+        }
+
+        function onConnectionLost(response) {
+            isMqttConnected = false;
+            elements.mqttStatusDot.className = 'status-dot offline';
+            elements.mqttStatusText.textContent = 'Disconnected';
+            addLog('⚠️ MQTT connection lost. Reconnecting...', 'error');
+
+            // Reconnect after 3 seconds
+            setTimeout(connectMQTT, 3000);
+        }
+
+        // ===================== MESSAGE HANDLER =====================
+        function onMessageArrived(message) {
+            try {
+                const payload = JSON.parse(message.payloadString);
+                const topic = message.destinationName;
+
+                if (topic === CONFIG.topicStatus) {
+                    // Update UI with status data
+                    if (payload.movement) {
+                        const dirMap = {
+                            'forward': '⬆ Forward',
+                            'backward': '⬇ Backward',
+                            'left': '⬅ Left',
+                            'right': '➡ Right',
+                            'stop': '⏹ Stop',
+                        };
+                        elements.movementStatus.textContent = dirMap[payload.movement] || payload.movement;
+                        elements.movementStatus.style.color = payload.movement !== 'stop' ? '#00cec9' : '#8892a8';
+                    }
+
+                    if (payload.speed) {
+                        const percent = Math.round((payload.speed / 255) * 100);
+                        elements.speedStatus.textContent = `${percent}%`;
+                    }
+
+                    if (payload.wifiRSSI || payload.wifiRSSI === 0) {
+                        elements.rssiStatus.textContent = `${payload.wifiRSSI} dBm`;
+                    }
+
+                    // Update current state
+                    if (payload.movement) currentDirection = payload.movement;
+                    if (payload.speed) currentSpeed = payload.speed;
+
+                    addLog(`📊 Status: ${payload.movement} @ ${payload.speed} | RSSI: ${payload.wifiRSSI}dBm`, 'highlight');
+                }
+            } catch (e) {
+                addLog(`⚠️ Failed to parse message: ${e.message}`, 'error');
+            }
+        }
+
+        // ===================== SEND COMMAND =====================
+        function sendCommand(direction, speed) {
+            if (!isMqttConnected) {
+                addLog('❌ Not connected to MQTT', 'error');
+                return;
+            }
+
+            const payload = { direction: direction };
+            if (direction !== 'stop') {
+                payload.speed = speed || currentSpeed;
+            }
+
+            const json = JSON.stringify(payload);
+
+            try {
+                const message = new Paho.MQTT.Message(json);
+                message.destinationName = CONFIG.topicMove;
+                message.qos = 1;
+                message.retained = false;
+
+                client.send(message);
+
+                // Update UI feedback
+                const dirMap = {
+                    'forward': '⬆ Forward',
+                    'backward': '⬇ Backward',
+                    'left': '⬅ Left',
+                    'right': '➡ Right',
+                    'stop': '⏹ Stop',
+                };
+
+                if (direction !== 'stop') {
+                    elements.movementStatus.textContent = dirMap[direction] || direction;
+                    elements.movementStatus.style.color = '#00cec9';
+                } else {
+                    elements.movementStatus.textContent = '⏹ Stop';
+                    elements.movementStatus.style.color = '#8892a8';
+                }
+
+                addLog(`🚀 Sent: ${direction} @ ${payload.speed || 0}`, 'success');
+                lastCommandTime = Date.now();
+
+            } catch (e) {
+                addLog(`❌ Failed to send: ${e.message}`, 'error');
+            }
+        }
+
+        // ===================== UI EVENT HANDLERS =====================
+
+        // Speed Slider
+        elements.speedSlider.addEventListener('input', function() {
+            currentSpeed = parseInt(this.value);
+            elements.speedDisplay.textContent = currentSpeed;
+
+            // Update preset buttons
+            elements.presetBtns.forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.speed) === currentSpeed);
+            });
+
+            // If robot is moving, update speed
+            if (currentDirection !== 'stop') {
+                sendCommand(currentDirection, currentSpeed);
+            }
+        });
+
+        // Speed Presets
+        elements.presetBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const speed = parseInt(this.dataset.speed);
+                currentSpeed = speed;
+                elements.speedSlider.value = speed;
+                elements.speedDisplay.textContent = speed;
+
+                elements.presetBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                if (currentDirection !== 'stop') {
+                    sendCommand(currentDirection, currentSpeed);
+                }
+            });
+        });
+
+        // D-PAD Buttons
+        elements.dpadBtns.forEach(btn => {
+            const isTouchDevice = 'ontouchstart' in window;
+
+            const startAction = (e) => {
+                e.preventDefault();
+                const dir = btn.dataset.dir;
+
+                // Remove active from all buttons
+                elements.dpadBtns.forEach(b => b.classList.remove('active'));
+
+                if (dir === 'stop') {
+                    sendCommand('stop', 0);
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.add('active');
+                    sendCommand(dir, currentSpeed);
+                }
+            };
+
+            const endAction = (e) => {
+                e.preventDefault();
+                // Don't stop on release for non-touch devices (allow click to toggle)
+                if (isTouchDevice) {
+                    btn.classList.remove('active');
+                    // Optional: auto-stop on release?
+                    // sendCommand('stop', 0);
+                }
+            };
+
+            btn.addEventListener('mousedown', startAction);
+            btn.addEventListener('mouseup', endAction);
+            btn.addEventListener('mouseleave', endAction);
+            btn.addEventListener('touchstart', startAction);
+            btn.addEventListener('touchend', endAction);
+            btn.addEventListener('touchcancel', endAction);
+
+            // Click as fallback
+            btn.addEventListener('click', function(e) {
+                if (!isTouchDevice) {
+                    const dir = this.dataset.dir;
+                    if (dir === 'stop') {
+                        sendCommand('stop', 0);
+                    } else {
+                        sendCommand(dir, currentSpeed);
+                    }
+                }
+            });
+        });
+
+        // Emergency Stop
+        elements.emergencyStopBtn.addEventListener('click', function() {
+            sendCommand('stop', 0);
+            addLog('🛑 EMERGENCY STOP ACTIVATED', 'error');
+            elements.dpadBtns.forEach(b => b.classList.remove('active'));
+        });
+
+        // Request Status
+        elements.sendStatusBtn.addEventListener('click', function() {
+            if (isMqttConnected) {
+                sendCommand('stop', 0); // Send stop to trigger status response
+                addLog('📡 Status requested', 'info');
+                // Also publish to status topic directly
+                try {
+                    const msg = new Paho.MQTT.Message('{"request":"status"}');
+                    msg.destinationName = CONFIG.topicStatus;
+                    client.send(msg);
+                } catch (e) {
+                    addLog(`❌ Status request failed: ${e.message}`, 'error');
+                }
+            } else {
+                addLog('❌ Not connected to MQTT', 'error');
+            }
+        });
+
+        // ===================== KEYBOARD SHORTCUTS =====================
+        document.addEventListener('keydown', function(e) {
+            // Prevent default for control keys
+            if (['w', 'W', 'a', 'A', 's', 'S', 'd', 'D', ' '].includes(e.key)) {
+                e.preventDefault();
+            }
+
+            const key = e.key.toLowerCase();
+
+            // Remove active from all buttons
+            elements.dpadBtns.forEach(b => b.classList.remove('active'));
+
+            if (key === 'w') {
+                sendCommand('forward', currentSpeed);
+                document.querySelector('.dpad-btn.up')?.classList.add('active');
+            } else if (key === 's') {
+                sendCommand('backward', currentSpeed);
+                document.querySelector('.dpad-btn.down')?.classList.add('active');
+            } else if (key === 'a') {
+                sendCommand('left', currentSpeed);
+                document.querySelector('.dpad-btn.left')?.classList.add('active');
+            } else if (key === 'd') {
+                sendCommand('right', currentSpeed);
+                document.querySelector('.dpad-btn.right')?.classList.add('active');
+            } else if (key === ' ') {
+                sendCommand('stop', 0);
+                document.querySelector('.dpad-btn.stop')?.classList.add('active');
+                setTimeout(() => {
+                    document.querySelector('.dpad-btn.stop')?.classList.remove('active');
+                }, 300);
+            }
+        });
+
+        // ===================== INIT =====================
+        addLog('🌱 FarmerOS AgriRobot Controller v1.0', 'highlight');
+        addLog('🔌 Connecting to MQTT...', 'info');
+
+        // Connect to MQTT
+        connectMQTT();
+
+        // Update speed display
+        elements.speedDisplay.textContent = currentSpeed;
+        elements.speedSlider.value = currentSpeed;
+
+        // Log help
+        addLog('⌨️ Use W/A/S/D or click buttons to control', 'info');
+
+        console.log('FarmerOS AgriRobot Controller loaded');
+        console.log('Use W/A/S/D keys or click buttons to control the robot');
+        console.log('Press Space for emergency stop');
+    </script>
+
+</body>
+</html>

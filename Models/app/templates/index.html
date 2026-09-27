@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crop Recommendation System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        
+        .status-badge {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-radius: 10px;
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status-badge.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .crop-tags {
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .crop-tag {
+            background: #e8f4fd;
+            color: #1a73e8;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 0.75em;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            font-weight: 600;
+            color: #555;
+            margin-bottom: 5px;
+            font-size: 0.85em;
+        }
+        
+        .label-hint {
+            font-weight: normal;
+            color: #999;
+            font-size: 0.7em;
+        }
+        
+        input, select {
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+        
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px 20px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-predict {
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            color: white;
+        }
+        
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(46, 204, 113, 0.4);
+        }
+        
+        .btn-predict:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .btn-reset {
+            background: #f0f0f0;
+            color: #555;
+        }
+        
+        .btn-reset:hover {
+            background: #e0e0e0;
+        }
+        
+        .btn-example {
+            background: #e8f4fd;
+            color: #1a73e8;
+        }
+        
+        .btn-example:hover {
+            background: #d0e8f5;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #27ae60;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-section {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+            background: #f8f9fa;
+            display: none;
+        }
+        
+        .result-section.show {
+            display: block;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .result-main {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+            border-radius: 12px;
+            color: white;
+        }
+        
+        .result-main .crop {
+            font-size: 2.5em;
+            font-weight: bold;
+        }
+        
+        .result-main .confidence {
+            font-size: 1.2em;
+            margin-top: 5px;
+        }
+        
+        .result-top {
+            margin-top: 20px;
+        }
+        
+        .result-top h3 {
+            margin-bottom: 10px;
+            color: #333;
+        }
+        
+        .top-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 15px;
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 5px;
+            border-left: 4px solid #27ae60;
+        }
+        
+        .top-item .name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .top-item .prob {
+            color: #27ae60;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            background: #f8d7da;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .container {
+                padding: 20px;
+            }
+            .crop-tags {
+                gap: 3px;
+            }
+            .crop-tag {
+                font-size: 0.65em;
+                padding: 2px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌾 Crop Recommendation</h1>
+        <p class="subtitle">Enter soil and environmental conditions to get crop recommendations</p>
+        
+        <div id="statusBadge" class="status-badge">
+            Loading model status...
+        </div>
+        
+        <div id="cropTags" class="crop-tags"></div>
+        
+        <form id="predictionForm">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Nitrogen (N) <span class="label-hint">kg/ha</span></label>
+                    <input type="number" step="1" id="N" value="90" min="0" max="200">
+                </div>
+                
+                <div class="form-group">
+                    <label>Phosphorus (P) <span class="label-hint">kg/ha</span></label>
+                    <input type="number" step="1" id="P" value="42" min="0" max="200">
+                </div>
+                
+                <div class="form-group">
+                    <label>Potassium (K) <span class="label-hint">kg/ha</span></label>
+                    <input type="number" step="1" id="K" value="43" min="0" max="200">
+                </div>
+                
+                <div class="form-group">
+                    <label>Temperature <span class="label-hint">°C</span></label>
+                    <input type="number" step="0.01" id="temperature" value="20.88" min="-10" max="50">
+                </div>
+                
+                <div class="form-group">
+                    <label>Humidity <span class="label-hint">%</span></label>
+                    <input type="number" step="0.01" id="humidity" value="82.00" min="0" max="100">
+                </div>
+                
+                <div class="form-group">
+                    <label>Soil pH</label>
+                    <input type="number" step="0.01" id="ph" value="6.50" min="0" max="14">
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Rainfall <span class="label-hint">mm/year</span></label>
+                    <input type="number" step="0.01" id="rainfall" value="202.94" min="0" max="5000">
+                </div>
+            </div>
+            
+            <div class="btn-group">
+                <button type="submit" class="btn-predict" id="predictBtn">
+                    🌱 Get Recommendation
+                </button>
+                <button type="button" class="btn-reset" onclick="resetForm()">
+                    ↩️ Reset
+                </button>
+                <button type="button" class="btn-example" onclick="loadExample()">
+                    📊 Example
+                </button>
+            </div>
+        </form>
+        
+        <div id="errorMessage" class="error-message">
+            ❌ <span id="errorText"></span>
+        </div>
+        
+        <div id="resultSection" class="result-section">
+            <div class="result-main">
+                <div>Recommended Crop</div>
+                <div class="crop" id="recommendation">-</div>
+                <div class="confidence">Confidence: <span id="confidence">0</span>%</div>
+            </div>
+            
+            <div class="result-top">
+                <h3>Top Alternatives</h3>
+                <div id="topRecommendations"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = '/predict';
+        const CROPS_URL = '/crops';
+        const HEALTH_URL = '/health';
+        
+        // DOM Elements
+        const form = document.getElementById('predictionForm');
+        const predictBtn = document.getElementById('predictBtn');
+        const resultSection = document.getElementById('resultSection');
+        const recommendation = document.getElementById('recommendation');
+        const confidence = document.getElementById('confidence');
+        const topRecommendations = document.getElementById('topRecommendations');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
+        const statusBadge = document.getElementById('statusBadge');
+        const cropTags = document.getElementById('cropTags');
+        
+        // Load available crops
+        async function loadCrops() {
+            try {
+                const response = await fetch(CROPS_URL);
+                const data = await response.json();
+                
+                if (data.crops) {
+                    cropTags.innerHTML = data.crops.map(crop => 
+                        `<span class="crop-tag">${crop}</span>`
+                    ).join('');
+                }
+            } catch (error) {
+                console.error('Failed to load crops:', error);
+            }
+        }
+        
+        // Check model status
+        async function checkStatus() {
+            try {
+                const response = await fetch(HEALTH_URL);
+                const data = await response.json();
+                
+                if (data.model_loaded) {
+                    statusBadge.textContent = `✅ Model Loaded - ${data.total_features} features, ${data.crop_classes?.length || 0} crops`;
+                    statusBadge.className = 'status-badge';
+                    if (data.crop_classes) {
+                        cropTags.innerHTML = data.crop_classes.map(crop => 
+                            `<span class="crop-tag">${crop}</span>`
+                        ).join('');
+                    }
+                } else {
+                    statusBadge.textContent = '❌ Model Not Loaded - Please check server';
+                    statusBadge.className = 'status-badge error';
+                }
+            } catch (error) {
+                statusBadge.textContent = '⚠️ Cannot connect to server';
+                statusBadge.className = 'status-badge error';
+            }
+        }
+        
+        // Load example data
+        function loadExample() {
+            const example = {
+                N: 90,
+                P: 42,
+                K: 43,
+                temperature: 20.88,
+                humidity: 82.00,
+                ph: 6.50,
+                rainfall: 202.94
+            };
+            
+            for (const [key, value] of Object.entries(example)) {
+                const element = document.getElementById(key);
+                if (element) {
+                    element.value = value;
+                }
+            }
+            
+            resultSection.classList.remove('show');
+            errorMessage.classList.remove('show');
+        }
+        
+        // Reset form
+        function resetForm() {
+            document.querySelectorAll('input').forEach(el => {
+                if (el.type === 'number') {
+                    el.value = '';
+                }
+            });
+            resultSection.classList.remove('show');
+            errorMessage.classList.remove('show');
+        }
+        
+        // Handle form submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            resultSection.classList.remove('show');
+            errorMessage.classList.remove('show');
+            
+            // Collect form data
+            const data = {};
+            const inputs = document.querySelectorAll('input');
+            inputs.forEach(el => {
+                const val = parseFloat(el.value);
+                data[el.id] = val;
+            });
+            
+            // Validate
+            for (const [key, value] of Object.entries(data)) {
+                if (isNaN(value) || value === '') {
+                    showError(`Please enter a valid number for ${key}`);
+                    return;
+                }
+            }
+            
+            // Show loading
+            predictBtn.disabled = true;
+            predictBtn.innerHTML = '<span class="loading"></span> Analyzing...';
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(result.detail || 'Prediction failed');
+                }
+                
+                // Display results
+                recommendation.textContent = result.recommended_crop;
+                confidence.textContent = result.confidence.toFixed(1);
+                
+                // Display top recommendations
+                topRecommendations.innerHTML = '';
+                result.top_recommendations.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'top-item';
+                    div.innerHTML = `
+                        <span class="name">${index + 1}. ${item.crop}</span>
+                        <span class="prob">${item.confidence.toFixed(1)}%</span>
+                    `;
+                    topRecommendations.appendChild(div);
+                });
+                
+                resultSection.classList.add('show');
+                
+            } catch (error) {
+                showError(error.message);
+            } finally {
+                predictBtn.disabled = false;
+                predictBtn.innerHTML = '🌱 Get Recommendation';
+            }
+        });
+        
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.add('show');
+            resultSection.classList.remove('show');
+        }
+        
+        // Initialize
+        checkStatus();
+        loadCrops();
+        loadExample();
+        
+        // Check status periodically
+        setInterval(checkStatus, 30000);
+    </script>
+</body>
+</html>

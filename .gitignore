@@ -34,3 +34,30 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# large local dependencies, generated output, datasets, and model assets
+/Models/.venv/
+/Models/app/models/
+/Models/disease_detection/
+/Models/Dataset/archive/
+/Models/Convertor_pth_to_onnx/
+/Backend/.venv/
+/Backend/app/models/
+/Mobile Application/kisan-saathi/node_modules/
+/Agro_ROS2_Humble/build/
+
+# generated artifacts across nested projects
+**/node_modules/
+**/.next/
+**/.venv/
+**/build/
+**/install/
+**/log/
+**/__pycache__/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.expo/
+**/dist/
+*.py[cod]
+*.log

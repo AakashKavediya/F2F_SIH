@@ -1,0 +1,81 @@
+name: Deploy FarmerOS Models
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  APP_NAME: farmeros-models
+  DEPLOY_PATH: /opt/farmeros-models
+  PYTHON_VERSION: "3.11"
+
+jobs:
+  test:
+    name: Test and validate
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Validate Python files
+        run: |
+          python -m compileall app Convertor_pth_to_onnx
+
+  deploy:
+    name: Deploy to server
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          source: "."
+          target: ${{ env.DEPLOY_PATH }}
+          rm: true
+          strip_components: 0
+          overwrite: true
+          exclude: ".git,.github,.venv,__pycache__,*.pyc"
+
+      - name: Install dependencies and restart app
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          port: ${{ secrets.DEPLOY_PORT || 22 }}
+          script: |
+            set -e
+            cd "${{ env.DEPLOY_PATH }}"
+            python3 -m venv .venv
+            . .venv/bin/activate
+            python -m pip install --upgrade pip
+            pip install -r requirements.txt
+            if systemctl list-unit-files | grep -q "${{ env.APP_NAME }}.service"; then
+              sudo systemctl restart "${{ env.APP_NAME }}"
+              sudo systemctl status "${{ env.APP_NAME }}" --no-pager
+            else
+              echo "Deploy completed, but no systemd service named ${{ env.APP_NAME }}.service was found."
+              echo "Create a service that runs: uvicorn app.main:app --host 0.0.0.0 --port 8000"
+            fi

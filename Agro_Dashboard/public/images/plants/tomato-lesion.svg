@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="100%" height="100%">
+  <defs>
+    <linearGradient id="leafScanBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14532D" />
+      <stop offset="50%" stop-color="#166534" />
+      <stop offset="100%" stop-color="#052E16" />
+    </linearGradient>
+    <radialGradient id="lesionGrad" cx="45%" cy="45%" r="55%">
+      <stop offset="0%" stop-color="#451A03" />
+      <stop offset="35%" stop-color="#78350F" />
+      <stop offset="70%" stop-color="#B45309" />
+      <stop offset="90%" stop-color="#F59E0B" />
+      <stop offset="100%" stop-color="#15803D" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="800" height="600" rx="20" fill="url(#leafScanBg)" />
+
+  <!-- Macro Leaf Vein Network -->
+  <path d="M 100 550 Q 380 320 680 80" stroke="#22C55E" stroke-width="8" fill="none" opacity="0.6" />
+  <path d="M 280 410 Q 180 340 120 320" stroke="#4ADE80" stroke-width="4" fill="none" opacity="0.5" />
+  <path d="M 380 320 Q 520 280 620 290" stroke="#4ADE80" stroke-width="4" fill="none" opacity="0.5" />
+  <path d="M 480 230 Q 380 180 300 160" stroke="#4ADE80" stroke-width="3" fill="none" opacity="0.4" />
+  <path d="M 560 160 Q 640 130 710 150" stroke="#4ADE80" stroke-width="3" fill="none" opacity="0.4" />
+
+  <!-- Early Blight Concentric Rings Lesion (Target-Board Pattern) -->
+  <g transform="translate(420, 260)">
+    <!-- Outer Chlorotic Halo -->
+    <ellipse cx="0" cy="0" rx="140" ry="110" fill="#EAB308" opacity="0.3" />
+    <ellipse cx="0" cy="0" rx="115" ry="90" fill="url(#lesionGrad)" />
+    <!-- Concentric Necrotic Rings -->
+    <ellipse cx="2" cy="-2" rx="90" ry="70" fill="none" stroke="#291102" stroke-width="3" opacity="0.75" />
+    <ellipse cx="4" cy="-3" rx="65" ry="50" fill="none" stroke="#451A03" stroke-width="3.5" opacity="0.85" />
+    <ellipse cx="5" cy="-2" rx="40" ry="32" fill="none" stroke="#1C0A00" stroke-width="4" opacity="0.9" />
+    <ellipse cx="6" cy="-2" rx="20" ry="16" fill="#1C0A00" />
+  </g>
+
+  <!-- AI Bounding Box & HUD Diagnostics -->
+  <rect x="250" y="120" width="340" height="280" rx="8" fill="none" stroke="#EF4444" stroke-width="2.5" stroke-dasharray="8,6" />
+  
+  <g transform="translate(260, 95)">
+    <rect width="210" height="28" rx="6" fill="#EF4444" />
+    <text x="12" y="18" font-family="system-ui, sans-serif" font-size="12" font-weight="800" fill="#FFFFFF">
+      EARLY BLIGHT (94.2% CONF.)
+    </text>
+  </g>
+
+  <!-- Agribot Shutter HUD -->
+  <text x="35" y="45" font-family="monospace" font-size="12" font-weight="700" fill="#4ADE80">
+    AGB-02 MULTISPECTRAL • CANOPY SCANNER 4K
+  </text>
+  <text x="35" y="65" font-family="monospace" font-size="11" fill="#9CA3AF">
+    PLANT-C-0182 • ROW 12 • 05 SEP 2026 14:22:08 UTC
+  </text>
+
+  <!-- Scanner Reticle Corners -->
+  <path d="M 40 100 L 40 40 L 100 40" stroke="#22C55E" stroke-width="3" fill="none" />
+  <path d="M 760 100 L 760 40 L 700 40" stroke="#22C55E" stroke-width="3" fill="none" />
+  <path d="M 40 500 L 40 560 L 100 560" stroke="#22C55E" stroke-width="3" fill="none" />
+  <path d="M 760 500 L 760 560 L 700 560" stroke="#22C55E" stroke-width="3" fill="none" />
+</svg>

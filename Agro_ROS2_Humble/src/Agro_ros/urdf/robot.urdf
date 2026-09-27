@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<robot name="Agrobot">
+
+    <material name="gray">
+        <color rgba="0.5 0.5 0.5 1"/>
+    </material>
+
+    <material name="black">
+        <color rgba="0.1 0.1 0.1 1"/>
+    </material>
+
+    <material name="green">
+        <color rgba="0 1 0 1"/>
+    </material>
+
+    <material name="red">
+        <color rgba="1 0 0 1"/>
+    </material>
+
+    <material name="white">
+        <color rgba="1 1 1 1"/>
+    </material>
+
+
+
+<!-- MESHES -->
+
+
+
+
+
+    <link name="base_link">
+        <visual>
+            <geometry>
+                <mesh filename="package://Agro_ros/meshes/agro_ros_body.stl"
+                      scale="0.025 0.025 0.025"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="black"/>
+        </visual>
+    </link>
+
+    <link name="tracks">
+        <visual>
+            <geometry>
+                <mesh filename="package://Agro_ros/meshes/agro_ros_tracks.stl"
+                      scale="0.025 0.025 0.025"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="red"/>
+        </visual>
+    </link>
+
+    <link name="track_outer_cover">
+        <visual>
+            <geometry>
+                <mesh filename="package://Agro_ros/meshes/agro_ros_tracks_outer_cover.stl"
+                      scale="0.025 0.025 0.025"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="white"/>
+        </visual>
+    </link>
+
+    <link name="water_level_sensor">
+        <visual>
+            <geometry>
+                <mesh filename="package://Agro_ros/meshes/agro_ros_water_level_sensor.stl"
+                      scale="0.025 0.025 0.025"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="red"/>
+        </visual>
+    </link>
+
+    <link name="water_pump">
+        <visual>
+            <geometry>
+                <mesh filename="package://Agro_ros/meshes/agro_ros_water_pump.stl"
+                      scale="0.025 0.025 0.025"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <material name="white"/>
+        </visual>
+    </link>
+
+
+
+<!-- JOINTS -->
+
+
+    <joint name="base_tracks_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="tracks"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="base_tracks_outer_cover_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="track_outer_cover"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="base_water_level_sensor_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="water_level_sensor"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <joint name="base_water_pump_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="water_pump"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+</robot>
